@@ -1,13 +1,19 @@
 
-import React from 'react';
-import { PlusCircle, Calendar, Users, Clock, DollarSign, MapPin } from 'lucide-react';
+import React, { useState } from 'react';
+import { PlusCircle, Calendar, Users, Clock, DollarSign, MapPin, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { CreateEventSheet } from '@/components/events/CreateEventSheet';
+import { ManageEventSheet } from '@/components/events/ManageEventSheet';
 
 const Events = () => {
+  const [isCreateSheetOpen, setIsCreateSheetOpen] = useState(false);
+  const [isManageSheetOpen, setIsManageSheetOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<any>(null);
+
   const upcomingEvents = [
     {
       id: '1',
@@ -20,6 +26,7 @@ const Events = () => {
       status: 'Planning',
       progress: 65,
       supplierCount: 5,
+      description: 'Annual gathering for all employees with keynote speakers and workshops.',
     },
     {
       id: '2',
@@ -32,6 +39,7 @@ const Events = () => {
       status: 'Confirmed',
       progress: 85,
       supplierCount: 4,
+      description: 'Exclusive event to launch our new product line with media and VIP guests.',
     },
     {
       id: '3',
@@ -44,6 +52,7 @@ const Events = () => {
       status: 'Planning',
       progress: 40,
       supplierCount: 6,
+      description: 'Formal dinner event to thank our top clients for their loyalty.',
     },
   ];
 
@@ -59,6 +68,7 @@ const Events = () => {
       status: 'Completed',
       progress: 100,
       supplierCount: 3,
+      description: 'Outdoor team building activities designed to improve team cohesion.',
     },
     {
       id: '5',
@@ -71,8 +81,14 @@ const Events = () => {
       status: 'Completed',
       progress: 100,
       supplierCount: 2,
+      description: 'Quarterly financial review and planning session with major stakeholders.',
     },
   ];
+
+  const handleManageEvent = (event: any) => {
+    setSelectedEvent(event);
+    setIsManageSheetOpen(true);
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -82,13 +98,15 @@ const Events = () => {
         return 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20';
       case 'Completed':
         return 'bg-purple-500/10 text-purple-500 border-purple-500/20';
+      case 'Cancelled':
+        return 'bg-red-500/10 text-red-500 border-red-500/20';
       default:
         return 'bg-gray-500/10 text-gray-500 border-gray-500/20';
     }
   };
 
   const EventCard = ({ event }: { event: any }) => (
-    <Card className="overflow-hidden hover-lift">
+    <Card className="overflow-hidden hover:shadow-md transition-shadow duration-300">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <div>
@@ -137,7 +155,14 @@ const Events = () => {
           <span className="text-xs text-muted-foreground">
             {event.supplierCount} suppliers assigned
           </span>
-          <Button variant="outline" size="sm">Manage Event</Button>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => handleManageEvent(event)}
+          >
+            <Settings className="mr-2 h-4 w-4" />
+            Manage Event
+          </Button>
         </div>
       </CardFooter>
     </Card>
@@ -152,7 +177,10 @@ const Events = () => {
             Plan and manage your upcoming events.
           </p>
         </div>
-        <Button className="sm:self-end">
+        <Button 
+          className="sm:self-end"
+          onClick={() => setIsCreateSheetOpen(true)}
+        >
           <PlusCircle className="mr-2 h-4 w-4" />
           Create New Event
         </Button>
@@ -180,6 +208,21 @@ const Events = () => {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Create Event Sheet */}
+      <CreateEventSheet 
+        isOpen={isCreateSheetOpen} 
+        onOpenChange={setIsCreateSheetOpen}
+      />
+
+      {/* Manage Event Sheet */}
+      {selectedEvent && (
+        <ManageEventSheet 
+          event={selectedEvent}
+          isOpen={isManageSheetOpen} 
+          onOpenChange={setIsManageSheetOpen}
+        />
+      )}
     </div>
   );
 };
