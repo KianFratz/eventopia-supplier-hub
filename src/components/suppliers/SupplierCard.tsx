@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Supplier } from '@/types/supplier';
 import { cn } from '@/lib/utils';
+import { useNavigate } from 'react-router-dom';
 
 interface SupplierCardProps {
   supplier: Supplier;
@@ -12,6 +13,7 @@ interface SupplierCardProps {
 }
 
 export const SupplierCard = ({ supplier, featured = false }: SupplierCardProps) => {
+  const navigate = useNavigate();
   const { 
     id, 
     name, 
@@ -23,6 +25,10 @@ export const SupplierCard = ({ supplier, featured = false }: SupplierCardProps) 
     availability,
     tags
   } = supplier;
+
+  const handleViewProfile = () => {
+    navigate(`/suppliers/${id}`);
+  };
 
   return (
     <div 
@@ -90,7 +96,7 @@ export const SupplierCard = ({ supplier, featured = false }: SupplierCardProps) 
         </div>
         
         <div className="pt-1">
-          <Button variant="default" size="sm" className="w-full">
+          <Button variant="default" size="sm" className="w-full" onClick={handleViewProfile}>
             View Profile
           </Button>
         </div>
