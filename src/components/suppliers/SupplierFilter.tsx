@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Search, Filter, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -47,16 +46,13 @@ export const SupplierFilter = ({ onFilterChange, categories, locations }: Suppli
     const newFilters = { ...filters, [key]: value };
     setFilters(newFilters);
     
-    // Update active filters for visual indicators
     const updatedActiveFilters = [...activeFilters];
     const filterIndex = updatedActiveFilters.findIndex(filter => filter.startsWith(`${key}:`));
     
     if (filterIndex > -1) {
-      // Remove if value is empty or false
       if (!value || (Array.isArray(value) && value[0] === 0 && value[1] === 1000)) {
         updatedActiveFilters.splice(filterIndex, 1);
       } else {
-        // Update existing
         let displayValue = value;
         if (key === 'priceRange') {
           displayValue = `$${value[0]}-$${value[1]}`;
@@ -68,7 +64,6 @@ export const SupplierFilter = ({ onFilterChange, categories, locations }: Suppli
         updatedActiveFilters[filterIndex] = `${key}:${displayValue}`;
       }
     } else if (value && !(key === 'priceRange' && value[0] === 0 && value[1] === 1000)) {
-      // Add new if not empty
       let displayValue = value;
       if (key === 'priceRange') {
         displayValue = `$${value[0]}-$${value[1]}`;
@@ -147,7 +142,7 @@ export const SupplierFilter = ({ onFilterChange, categories, locations }: Suppli
               <SelectValue placeholder="Category" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Categories</SelectItem>
+              <SelectItem value="all">All Categories</SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category} value={category}>
                   {category}
@@ -217,7 +212,7 @@ export const SupplierFilter = ({ onFilterChange, categories, locations }: Suppli
                       <SelectValue placeholder="Any Location" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Any Location</SelectItem>
+                      <SelectItem value="any">Any Location</SelectItem>
                       {locations.map((location) => (
                         <SelectItem key={location} value={location}>
                           {location}

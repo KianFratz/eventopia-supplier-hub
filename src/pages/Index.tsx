@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Users, Calendar, Star, TrendingUp, DollarSign, Award } from 'lucide-react';
+import { Users, Calendar, Star, TrendingUp, DollarSign, Award, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { StatCard } from '@/components/dashboard/StatCard';
