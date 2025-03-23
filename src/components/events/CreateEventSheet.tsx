@@ -13,13 +13,27 @@ import { EventForm } from './EventForm';
 interface CreateEventSheetProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  onEventCreated?: (event: any) => void;
 }
 
-export function CreateEventSheet({ isOpen, onOpenChange }: CreateEventSheetProps) {
+export function CreateEventSheet({ isOpen, onOpenChange, onEventCreated }: CreateEventSheetProps) {
   const handleSubmit = (data: any) => {
     console.log('New event:', data);
+    
+    // Generate a fake ID
+    const newEvent = {
+      ...data,
+      id: `event-${Math.random().toString(36).substring(2, 9)}`,
+      status: data.status || 'Upcoming'
+    };
+    
     toast.success('Event created successfully!');
     onOpenChange(false);
+    
+    // Notify parent component about the new event
+    if (onEventCreated) {
+      onEventCreated(newEvent);
+    }
   };
 
   return (

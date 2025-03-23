@@ -1,226 +1,118 @@
 
 import React, { useState } from 'react';
-import { PlusCircle, Calendar, Users, Clock, DollarSign, MapPin, Settings } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { EventCard } from '@/components/events/EventCard';
 import { CreateEventSheet } from '@/components/events/CreateEventSheet';
 import { ManageEventSheet } from '@/components/events/ManageEventSheet';
 
+// Mock events data
+const mockEvents = [
+  {
+    id: '1',
+    name: 'Annual Tech Conference',
+    date: '2023-11-15',
+    time: '09:00 AM - 05:00 PM',
+    location: 'San Francisco, CA',
+    budget: '$25,000',
+    attendees: 500,
+    status: 'Upcoming',
+    description: 'Our annual technology conference featuring keynote speakers, workshops, and networking opportunities.',
+  },
+  {
+    id: '2',
+    name: 'Product Launch Party',
+    date: '2023-12-05',
+    time: '07:00 PM - 10:00 PM',
+    location: 'New York, NY',
+    budget: '$15,000',
+    attendees: 200,
+    status: 'Planning',
+    description: 'Exclusive launch party for our new product line with press, influencers, and key customers.',
+  },
+  {
+    id: '3',
+    name: 'Team Building Retreat',
+    date: '2024-01-20',
+    time: 'All Day',
+    location: 'Denver, CO',
+    budget: '$10,000',
+    attendees: 50,
+    status: 'Draft',
+    description: 'Company retreat focused on team building activities and strategic planning sessions.',
+  },
+  {
+    id: '4',
+    name: 'Customer Appreciation Gala',
+    date: '2023-10-10',
+    time: '06:30 PM - 11:00 PM',
+    location: 'Chicago, IL',
+    budget: '$30,000',
+    attendees: 300,
+    status: 'Completed',
+    description: 'Annual formal dinner to recognize and appreciate our top clients and partners.',
+  },
+];
+
 const Events = () => {
-  const [isCreateSheetOpen, setIsCreateSheetOpen] = useState(false);
-  const [isManageSheetOpen, setIsManageSheetOpen] = useState(false);
+  const [events, setEvents] = useState(mockEvents);
+  const [isCreateEventOpen, setIsCreateEventOpen] = useState(false);
+  const [isManageEventOpen, setIsManageEventOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
 
-  const upcomingEvents = [
-    {
-      id: '1',
-      name: 'Annual Corporate Conference',
-      date: 'May 15, 2023',
-      time: '9:00 AM - 5:00 PM',
-      location: 'Grand Hotel, New York',
-      budget: '$15,000',
-      attendees: 200,
-      status: 'Planning',
-      progress: 65,
-      supplierCount: 5,
-      description: 'Annual gathering for all employees with keynote speakers and workshops.',
-    },
-    {
-      id: '2',
-      name: 'Product Launch Party',
-      date: 'June 3, 2023',
-      time: '7:00 PM - 10:00 PM',
-      location: 'Tech Hub, San Francisco',
-      budget: '$8,500',
-      attendees: 80,
-      status: 'Confirmed',
-      progress: 85,
-      supplierCount: 4,
-      description: 'Exclusive event to launch our new product line with media and VIP guests.',
-    },
-    {
-      id: '3',
-      name: 'Client Appreciation Gala',
-      date: 'June 22, 2023',
-      time: '6:30 PM - 11:00 PM',
-      location: 'Riverside Venue, Chicago',
-      budget: '$12,000',
-      attendees: 120,
-      status: 'Planning',
-      progress: 40,
-      supplierCount: 6,
-      description: 'Formal dinner event to thank our top clients for their loyalty.',
-    },
-  ];
+  const handleCreateEvent = (newEvent: any) => {
+    setEvents([newEvent, ...events]);
+  };
 
-  const pastEvents = [
-    {
-      id: '4',
-      name: 'Team Building Retreat',
-      date: 'April 10, 2023',
-      time: '10:00 AM - 4:00 PM',
-      location: 'Mountain Lodge, Denver',
-      budget: '$5,000',
-      attendees: 35,
-      status: 'Completed',
-      progress: 100,
-      supplierCount: 3,
-      description: 'Outdoor team building activities designed to improve team cohesion.',
-    },
-    {
-      id: '5',
-      name: 'Quarterly Stakeholder Meeting',
-      date: 'March 25, 2023',
-      time: '1:00 PM - 4:00 PM',
-      location: 'Company HQ, Boston',
-      budget: '$2,500',
-      attendees: 50,
-      status: 'Completed',
-      progress: 100,
-      supplierCount: 2,
-      description: 'Quarterly financial review and planning session with major stakeholders.',
-    },
-  ];
+  const handleUpdateEvent = (updatedEvent: any) => {
+    setEvents(events.map(event => 
+      event.id === updatedEvent.id ? updatedEvent : event
+    ));
+  };
 
   const handleManageEvent = (event: any) => {
     setSelectedEvent(event);
-    setIsManageSheetOpen(true);
+    setIsManageEventOpen(true);
   };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Planning':
-        return 'bg-blue-500/10 text-blue-500 border-blue-500/20';
-      case 'Confirmed':
-        return 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20';
-      case 'Completed':
-        return 'bg-purple-500/10 text-purple-500 border-purple-500/20';
-      case 'Cancelled':
-        return 'bg-red-500/10 text-red-500 border-red-500/20';
-      default:
-        return 'bg-gray-500/10 text-gray-500 border-gray-500/20';
-    }
-  };
-
-  const EventCard = ({ event }: { event: any }) => (
-    <Card className="overflow-hidden hover:shadow-md transition-shadow duration-300">
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-start">
-          <div>
-            <CardTitle className="text-lg">{event.name}</CardTitle>
-            <CardDescription>{event.date}</CardDescription>
-          </div>
-          <Badge className={getStatusColor(event.status)}>
-            {event.status}
-          </Badge>
-        </div>
-      </CardHeader>
-      <CardContent className="pb-3">
-        <div className="space-y-4">
-          <div className="flex flex-col space-y-1.5">
-            <div className="flex items-center text-sm text-muted-foreground">
-              <Clock className="mr-2 h-4 w-4" />
-              <span>{event.time}</span>
-            </div>
-            <div className="flex items-center text-sm text-muted-foreground">
-              <MapPin className="mr-2 h-4 w-4" />
-              <span>{event.location}</span>
-            </div>
-            <div className="flex items-center text-sm text-muted-foreground">
-              <Users className="mr-2 h-4 w-4" />
-              <span>{event.attendees} Attendees</span>
-            </div>
-            <div className="flex items-center text-sm text-muted-foreground">
-              <DollarSign className="mr-2 h-4 w-4" />
-              <span>Budget: {event.budget}</span>
-            </div>
-          </div>
-          
-          {event.status !== 'Completed' && (
-            <div className="space-y-1.5">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Planning Progress</span>
-                <span className="font-medium">{event.progress}%</span>
-              </div>
-              <Progress value={event.progress} className="h-2" />
-            </div>
-          )}
-        </div>
-      </CardContent>
-      <CardFooter className="border-t bg-muted/20 pt-3">
-        <div className="flex justify-between items-center w-full">
-          <span className="text-xs text-muted-foreground">
-            {event.supplierCount} suppliers assigned
-          </span>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => handleManageEvent(event)}
-          >
-            <Settings className="mr-2 h-4 w-4" />
-            Manage Event
-          </Button>
-        </div>
-      </CardFooter>
-    </Card>
-  );
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="space-y-8">
+      <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold tracking-tight mb-2">Events</h1>
           <p className="text-muted-foreground">
-            Plan and manage your upcoming events.
+            Create and manage all your events in one place.
           </p>
         </div>
-        <Button 
-          className="sm:self-end"
-          onClick={() => setIsCreateSheetOpen(true)}
-        >
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Create New Event
+        
+        <Button onClick={() => setIsCreateEventOpen(true)}>
+          <Plus className="mr-2 h-4 w-4" />
+          Create Event
         </Button>
       </div>
       
-      <Tabs defaultValue="upcoming">
-        <TabsList className="grid w-full max-w-md grid-cols-2">
-          <TabsTrigger value="upcoming">Upcoming Events</TabsTrigger>
-          <TabsTrigger value="past">Past Events</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="upcoming" className="mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {upcomingEvents.map((event) => (
-              <EventCard key={event.id} event={event} />
-            ))}
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="past" className="mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {pastEvents.map((event) => (
-              <EventCard key={event.id} event={event} />
-            ))}
-          </div>
-        </TabsContent>
-      </Tabs>
-
-      {/* Create Event Sheet */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {events.map((event) => (
+          <EventCard 
+            key={event.id} 
+            event={event} 
+            onManage={() => handleManageEvent(event)} 
+          />
+        ))}
+      </div>
+      
       <CreateEventSheet 
-        isOpen={isCreateSheetOpen} 
-        onOpenChange={setIsCreateSheetOpen}
+        isOpen={isCreateEventOpen} 
+        onOpenChange={setIsCreateEventOpen}
+        onEventCreated={handleCreateEvent}
       />
-
-      {/* Manage Event Sheet */}
+      
       {selectedEvent && (
         <ManageEventSheet 
           event={selectedEvent}
-          isOpen={isManageSheetOpen} 
-          onOpenChange={setIsManageSheetOpen}
+          isOpen={isManageEventOpen} 
+          onOpenChange={setIsManageEventOpen}
+          onEventUpdated={handleUpdateEvent}
         />
       )}
     </div>

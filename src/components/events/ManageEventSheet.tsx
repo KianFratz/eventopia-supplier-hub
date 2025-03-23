@@ -9,18 +9,31 @@ import {
   SheetDescription 
 } from '@/components/ui/sheet';
 import { EventForm } from './EventForm';
+import { EventRecommendations } from './EventRecommendations';
+import { Separator } from '@/components/ui/separator';
 
 interface ManageEventSheetProps {
   event: any;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  onEventUpdated?: (event: any) => void;
 }
 
-export function ManageEventSheet({ event, isOpen, onOpenChange }: ManageEventSheetProps) {
+export function ManageEventSheet({ event, isOpen, onOpenChange, onEventUpdated }: ManageEventSheetProps) {
   const handleSubmit = (data: any) => {
     console.log('Updated event:', data);
+    
+    const updatedEvent = {
+      ...event,
+      ...data
+    };
+    
     toast.success('Event updated successfully!');
-    onOpenChange(false);
+    
+    // Notify parent component about the updated event
+    if (onEventUpdated) {
+      onEventUpdated(updatedEvent);
+    }
   };
 
   // Format the date for the input field (YYYY-MM-DD)
@@ -62,6 +75,10 @@ export function ManageEventSheet({ event, isOpen, onOpenChange }: ManageEventShe
           onSubmit={handleSubmit}
           submitLabel="Update Event"
         />
+        
+        <Separator className="my-6" />
+        
+        <EventRecommendations event={event} />
       </SheetContent>
     </Sheet>
   );

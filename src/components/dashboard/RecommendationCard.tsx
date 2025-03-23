@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Star, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -12,6 +13,12 @@ interface RecommendationCardProps {
 }
 
 export const RecommendationCard = ({ supplier, reason }: RecommendationCardProps) => {
+  const navigate = useNavigate();
+  
+  const handleViewSupplier = () => {
+    navigate(`/suppliers/${supplier.id}`);
+  };
+  
   return (
     <Card className="overflow-hidden transition-all hover-lift">
       <div className="relative">
@@ -38,7 +45,12 @@ export const RecommendationCard = ({ supplier, reason }: RecommendationCardProps
           <p className="text-xs text-muted-foreground">{supplier.category} • {supplier.location}</p>
           <p className="text-sm">{reason}</p>
           
-          <Button variant="outline" size="sm" className="w-full justify-between mt-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="w-full justify-between mt-2"
+            onClick={handleViewSupplier}
+          >
             <span>View Supplier</span>
             <ArrowRight className="h-4 w-4" />
           </Button>
