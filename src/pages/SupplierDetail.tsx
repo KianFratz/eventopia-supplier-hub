@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
@@ -24,12 +23,14 @@ import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from '@/components/ui/use-toast';
 import { Supplier } from '@/types/supplier';
+import { AddToEventDialog } from '@/components/suppliers/AddToEventDialog';
 
 const SupplierDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [supplier, setSupplier] = useState<Supplier | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showAddToEventDialog, setShowAddToEventDialog] = useState(false);
 
   useEffect(() => {
     // Simulate loading from an API
@@ -143,7 +144,7 @@ const SupplierDetail = () => {
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <Button onClick={handleContactClick}>Contact Supplier</Button>
-                  <Button variant="outline">Add to Event</Button>
+                  <Button variant="outline" onClick={() => setShowAddToEventDialog(true)}>Add to Event</Button>
                 </div>
               </div>
 
@@ -309,6 +310,12 @@ const SupplierDetail = () => {
           </Card>
         </div>
       </div>
+
+      <AddToEventDialog 
+        supplier={supplier}
+        isOpen={showAddToEventDialog}
+        onOpenChange={setShowAddToEventDialog}
+      />
     </div>
   );
 };

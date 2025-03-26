@@ -1,4 +1,3 @@
-
 import { Supplier } from '@/types/supplier';
 
 // Generate random IDs
@@ -320,6 +319,65 @@ export const mockSuppliers: Supplier[] = [
       website: "https://example.com/artisandesserts",
     },
   },
+];
+
+// Add mockEvents if it doesn't exist yet
+export const mockEvents = [
+  {
+    id: 'event-1',
+    name: 'Annual Corporate Conference',
+    date: '2023-12-10',
+    time: '9:00 AM - 5:00 PM',
+    location: 'Grand Conference Center',
+    budget: '$15,000',
+    attendees: 250,
+    status: 'Upcoming',
+    description: 'Annual corporate event bringing together leadership and employees for strategic planning and team building activities.'
+  },
+  {
+    id: 'event-2',
+    name: 'Product Launch Party',
+    date: '2023-11-25',
+    time: '7:00 PM - 10:00 PM',
+    location: 'The Innovative Space',
+    budget: '$8,500',
+    attendees: 120,
+    status: 'Planning',
+    description: 'Exclusive launch event to showcase our new product line to industry influencers and key clients.'
+  },
+  {
+    id: 'event-3',
+    name: 'Team Building Retreat',
+    date: '2024-01-15',
+    time: '8:00 AM - 6:00 PM',
+    location: 'Lakeside Resort & Spa',
+    budget: '$5,000',
+    attendees: 35,
+    status: 'Draft',
+    description: 'Off-site retreat focused on team building activities and strategic planning for the marketing department.'
+  },
+  {
+    id: 'event-4',
+    name: 'Client Appreciation Dinner',
+    date: '2023-10-05',
+    time: '6:30 PM - 9:30 PM',
+    location: 'The Michelin Star',
+    budget: '$7,200',
+    attendees: 60,
+    status: 'Completed',
+    description: 'Exclusive dinner event to thank our top clients for their business and showcase upcoming services.'
+  },
+  {
+    id: 'event-5',
+    name: 'Holiday Party',
+    date: '2023-12-18',
+    time: '7:00 PM - 11:00 PM',
+    location: 'Grand Ballroom',
+    budget: '$12,000',
+    attendees: 175,
+    status: 'Planning',
+    description: 'Annual end-of-year celebration for all employees featuring dinner, awards, and entertainment.'
+  }
 ];
 
 // Add more suppliers
