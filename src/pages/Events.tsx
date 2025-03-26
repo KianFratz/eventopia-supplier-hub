@@ -5,6 +5,21 @@ import { Button } from '@/components/ui/button';
 import { EventCard } from '@/components/events/EventCard';
 import { CreateEventSheet } from '@/components/events/CreateEventSheet';
 import { ManageEventSheet } from '@/components/events/ManageEventSheet';
+import { Supplier } from '@/types/supplier';
+
+// Enhanced Event interface with suppliers
+export interface Event {
+  id: string;
+  name: string;
+  date: string;
+  time: string;
+  location: string;
+  budget: string;
+  attendees: number;
+  status: string;
+  description: string;
+  suppliers?: Supplier[]; // Add suppliers array
+}
 
 // Mock events data
 const mockEvents = [
@@ -18,6 +33,7 @@ const mockEvents = [
     attendees: 500,
     status: 'Upcoming',
     description: 'Our annual technology conference featuring keynote speakers, workshops, and networking opportunities.',
+    suppliers: [], // Initialize empty suppliers array
   },
   {
     id: '2',
@@ -29,6 +45,7 @@ const mockEvents = [
     attendees: 200,
     status: 'Planning',
     description: 'Exclusive launch party for our new product line with press, influencers, and key customers.',
+    suppliers: [], // Initialize empty suppliers array
   },
   {
     id: '3',
@@ -40,6 +57,7 @@ const mockEvents = [
     attendees: 50,
     status: 'Draft',
     description: 'Company retreat focused on team building activities and strategic planning sessions.',
+    suppliers: [], // Initialize empty suppliers array
   },
   {
     id: '4',
@@ -51,6 +69,7 @@ const mockEvents = [
     attendees: 300,
     status: 'Completed',
     description: 'Annual formal dinner to recognize and appreciate our top clients and partners.',
+    suppliers: [], // Initialize empty suppliers array
   },
 ];
 
@@ -61,7 +80,12 @@ const Events = () => {
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
 
   const handleCreateEvent = (newEvent: any) => {
-    setEvents([newEvent, ...events]);
+    // Ensure the new event has a suppliers array
+    const eventWithSuppliers = {
+      ...newEvent,
+      suppliers: [],
+    };
+    setEvents([eventWithSuppliers, ...events]);
   };
 
   const handleUpdateEvent = (updatedEvent: any) => {

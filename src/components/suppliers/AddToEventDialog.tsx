@@ -11,42 +11,10 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { EventCard } from '@/components/events/EventCard';
 import { Separator } from '@/components/ui/separator';
 import { mockEvents } from '@/data/mockData';
-
-interface Event {
-  id: string;
-  name: string;
-  date: string;
-  time: string;
-  location: string;
-  budget: string;
-  attendees: number;
-  status: string;
-  description: string;
-}
-
-interface Supplier {
-  id: string;
-  name: string;
-  category: string;
-  description: string;
-  image: string;
-  gallery?: string[];
-  rating: number;
-  reviews: number;
-  location: string;
-  price: string;
-  availability: string;
-  tags: string[];
-  contact: {
-    email: string;
-    phone: string;
-    website?: string;
-  };
-  services?: string[];
-}
+import { Event } from '@/pages/Events';
+import { Supplier } from '@/types/supplier';
 
 interface AddToEventDialogProps {
   supplier: Supplier;
@@ -64,7 +32,6 @@ export function AddToEventDialog({
 
   useEffect(() => {
     // In a real app, we would fetch the user's events from an API
-    // For now, we'll use the mock data
     setLoading(true);
     setTimeout(() => {
       // Only get events that are not completed or cancelled
@@ -77,10 +44,34 @@ export function AddToEventDialog({
   }, []);
 
   const handleAddToEvent = (eventId: string) => {
-    // In a real app, we would make an API call to associate the supplier with the event
-    console.log(`Adding supplier ${supplier.id} to event ${eventId}`);
+    // Find the event in mockEvents
+    const eventIndex = mockEvents.findIndex(e => e.id === eventId);
     
-    toast.success(`${supplier.name} has been added to your event!`);
+    if (eventIndex !== -1) {
+      // Check if supplier is already added to this event
+      const isSupplierAlreadyAdded = mockEvents[eventIndex].suppliers?.some(
+        s => s.id === supplier.id
+      );
+      
+      if (isSupplierAlreadyAdded) {
+        toast.info(`${supplier.name} is already added to this event.`);
+      } else {
+        // Add the supplier to the event
+        if (!mockEvents[eventIndex].suppliers) {
+          mockEvents[eventIndex].suppliers = [];
+        }
+        mockEvents[eventIndex].suppliers?.push(supplier);
+        
+        // Log for debugging
+        console.log(`Added supplier ${supplier.id} to event ${eventId}`);
+        console.log("Updated event:", mockEvents[eventIndex]);
+        
+        toast.success(`${supplier.name} has been added to your event!`);
+      }
+    } else {
+      toast.error("Event not found. Please try again.");
+    }
+    
     onOpenChange(false);
   };
 

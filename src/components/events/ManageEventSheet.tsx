@@ -11,12 +11,14 @@ import {
 import { EventForm } from './EventForm';
 import { EventRecommendations } from './EventRecommendations';
 import { Separator } from '@/components/ui/separator';
+import { EventSuppliers } from './EventSuppliers';
+import { Event } from '@/pages/Events';
 
 interface ManageEventSheetProps {
-  event: any;
+  event: Event;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onEventUpdated?: (event: any) => void;
+  onEventUpdated?: (event: Event) => void;
 }
 
 export function ManageEventSheet({ event, isOpen, onOpenChange, onEventUpdated }: ManageEventSheetProps) {
@@ -25,7 +27,8 @@ export function ManageEventSheet({ event, isOpen, onOpenChange, onEventUpdated }
     
     const updatedEvent = {
       ...event,
-      ...data
+      ...data,
+      suppliers: event.suppliers || [], // Preserve suppliers
     };
     
     toast.success('Event updated successfully!');
@@ -75,6 +78,11 @@ export function ManageEventSheet({ event, isOpen, onOpenChange, onEventUpdated }
           onSubmit={handleSubmit}
           submitLabel="Update Event"
         />
+        
+        <Separator className="my-6" />
+        
+        {/* Add the EventSuppliers component */}
+        <EventSuppliers event={event} />
         
         <Separator className="my-6" />
         
