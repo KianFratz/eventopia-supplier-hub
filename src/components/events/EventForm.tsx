@@ -124,7 +124,7 @@ export function EventForm({
                 )}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="center" side="bottom">
+            <PopoverContent className="w-auto p-0 pointer-events-auto" align="center" side="bottom">
               <Calendar
                 mode="single"
                 selected={form.getValues('date') ? new Date(form.getValues('date')) : undefined}
@@ -137,6 +137,7 @@ export function EventForm({
                   date < new Date()
                 }
                 initialFocus
+                className={cn("p-3 pointer-events-auto")}
               />
             </PopoverContent>
           </Popover>
@@ -163,14 +164,14 @@ export function EventForm({
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div>
           <Label htmlFor="budget">Budget</Label>
-          <Input id="budget" type="number" placeholder="Budget" {...form.register('budget')} />
+          <Input id="budget" type="text" placeholder="Budget" {...form.register('budget')} />
           {form.formState.errors.budget && (
             <p className="text-sm text-destructive mt-1">{form.formState.errors.budget.message}</p>
           )}
         </div>
         <div>
           <Label htmlFor="status">Status</Label>
-          <Select disabled>
+          <Select defaultValue="Upcoming" disabled>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
@@ -186,7 +187,7 @@ export function EventForm({
 
       <div>
         <Label htmlFor="type">Type</Label>
-        <Select {...form.register('type')} >
+        <Select defaultValue={form.getValues('type')} onValueChange={(value) => form.setValue('type', value)}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select a type" />
           </SelectTrigger>
