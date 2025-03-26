@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { 
   Sheet, 
@@ -11,8 +11,9 @@ import {
 import { EventForm } from './EventForm';
 import { EventRecommendations } from './EventRecommendations';
 import { Separator } from '@/components/ui/separator';
-import { EventSuppliers } from './EventSuppliers';
+import { SupplierSelector } from './SupplierSelector';
 import { Event } from '@/pages/Events';
+import { Supplier } from '@/types/supplier';
 
 interface ManageEventSheetProps {
   event: Event;
@@ -22,13 +23,20 @@ interface ManageEventSheetProps {
 }
 
 export function ManageEventSheet({ event, isOpen, onOpenChange, onEventUpdated }: ManageEventSheetProps) {
+  const [selectedSuppliers, setSelectedSuppliers] = useState<Supplier[]>(event.suppliers || []);
+
+  // Update selectedSuppliers when event changes
+  useEffect(() => {
+    setSelectedSuppliers(event.suppliers || []);
+  }, [event]);
+
   const handleSubmit = (data: any) => {
     console.log('Updated event:', data);
     
     const updatedEvent = {
       ...event,
       ...data,
-      suppliers: event.suppliers || [], // Preserve suppliers
+      suppliers: selectedSuppliers, // Use the current state of selectedSuppliers
     };
     
     toast.success('Event updated successfully!');
@@ -37,6 +45,21 @@ export function ManageEventSheet({ event, isOpen, onOpenChange, onEventUpdated }
     if (onEventUpdated) {
       onEventUpdated(updatedEvent);
     }
+  };
+
+  // Function to add a supplier to the selection
+  const handleAddSupplier = (supplier: Supplier) => {
+    if (!selectedSuppliers.some(s => s.id === supplier.id)) {
+      const newSelectedSuppliers = [...selectedSuppliers, supplier];
+      setSelectedSuppliers(newSelectedSuppliers);
+      toast.success(`${supplier.name} added to event`);
+    }
+  };
+
+  // Function to remove a supplier from the selection
+  const handleRemoveSupplier = (supplierId: string) => {
+    setSelectedSuppliers(selectedSuppliers.filter(s => s.id !== supplierId));
+    toast.success("Supplier removed from event");
   };
 
   // Format the date for the input field (YYYY-MM-DD)
@@ -81,8 +104,11 @@ export function ManageEventSheet({ event, isOpen, onOpenChange, onEventUpdated }
         
         <Separator className="my-6" />
         
-        {/* Add the EventSuppliers component */}
-        <EventSuppliers event={event} />
+        <SupplierSelector
+          selectedSuppliers={selectedSuppliers}
+          onAddSupplier={handleAddSupplier}
+          onRemoveSupplier={handleRemoveSupplier}
+        />
         
         <Separator className="my-6" />
         

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { toast } from 'sonner';
 import { 
   Sheet, 
@@ -8,7 +8,10 @@ import {
   SheetTitle, 
   SheetDescription 
 } from '@/components/ui/sheet';
+import { Separator } from '@/components/ui/separator';
 import { EventForm } from './EventForm';
+import { SupplierSelector } from './SupplierSelector';
+import { Supplier } from '@/types/supplier';
 
 interface CreateEventSheetProps {
   isOpen: boolean;
@@ -17,6 +20,8 @@ interface CreateEventSheetProps {
 }
 
 export function CreateEventSheet({ isOpen, onOpenChange, onEventCreated }: CreateEventSheetProps) {
+  const [selectedSuppliers, setSelectedSuppliers] = useState<Supplier[]>([]);
+
   const handleSubmit = (data: any) => {
     console.log('New event:', data);
     
@@ -24,7 +29,8 @@ export function CreateEventSheet({ isOpen, onOpenChange, onEventCreated }: Creat
     const newEvent = {
       ...data,
       id: `event-${Math.random().toString(36).substring(2, 9)}`,
-      status: data.status || 'Upcoming'
+      status: data.status || 'Upcoming',
+      suppliers: selectedSuppliers, // Add selected suppliers to the new event
     };
     
     toast.success('Event created successfully!');
@@ -34,6 +40,23 @@ export function CreateEventSheet({ isOpen, onOpenChange, onEventCreated }: Creat
     if (onEventCreated) {
       onEventCreated(newEvent);
     }
+
+    // Reset selected suppliers after creating the event
+    setSelectedSuppliers([]);
+  };
+
+  // Function to add a supplier to the selection
+  const handleAddSupplier = (supplier: Supplier) => {
+    if (!selectedSuppliers.some(s => s.id === supplier.id)) {
+      setSelectedSuppliers([...selectedSuppliers, supplier]);
+      toast.success(`${supplier.name} added to event`);
+    }
+  };
+
+  // Function to remove a supplier from the selection
+  const handleRemoveSupplier = (supplierId: string) => {
+    setSelectedSuppliers(selectedSuppliers.filter(s => s.id !== supplierId));
+    toast.success("Supplier removed from event");
   };
 
   return (
@@ -49,6 +72,14 @@ export function CreateEventSheet({ isOpen, onOpenChange, onEventCreated }: Creat
         <EventForm 
           onSubmit={handleSubmit}
           submitLabel="Create Event"
+        />
+        
+        <Separator className="my-6" />
+        
+        <SupplierSelector 
+          selectedSuppliers={selectedSuppliers}
+          onAddSupplier={handleAddSupplier}
+          onRemoveSupplier={handleRemoveSupplier}
         />
       </SheetContent>
     </Sheet>
