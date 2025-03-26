@@ -11,6 +11,7 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { EventForm } from './EventForm';
 import { SupplierSelector } from './SupplierSelector';
+import { EventRecommendations } from './EventRecommendations';
 import { Supplier } from '@/types/supplier';
 
 interface CreateEventSheetProps {
@@ -21,6 +22,7 @@ interface CreateEventSheetProps {
 
 export function CreateEventSheet({ isOpen, onOpenChange, onEventCreated }: CreateEventSheetProps) {
   const [selectedSuppliers, setSelectedSuppliers] = useState<Supplier[]>([]);
+  const [eventData, setEventData] = useState<any>(null);
 
   const handleSubmit = (data: any) => {
     console.log('New event:', data);
@@ -43,6 +45,15 @@ export function CreateEventSheet({ isOpen, onOpenChange, onEventCreated }: Creat
 
     // Reset selected suppliers after creating the event
     setSelectedSuppliers([]);
+    setEventData(null);
+  };
+
+  // Function to handle form data changes to show recommendations
+  const handleFormChange = (data: any) => {
+    // Only update if we have enough data to make recommendations
+    if (data.name || data.description || data.type) {
+      setEventData(data);
+    }
   };
 
   // Function to add a supplier to the selection
@@ -72,6 +83,7 @@ export function CreateEventSheet({ isOpen, onOpenChange, onEventCreated }: Creat
         <EventForm 
           onSubmit={handleSubmit}
           submitLabel="Create Event"
+          onChange={handleFormChange}
         />
         
         <Separator className="my-6" />
@@ -81,6 +93,13 @@ export function CreateEventSheet({ isOpen, onOpenChange, onEventCreated }: Creat
           onAddSupplier={handleAddSupplier}
           onRemoveSupplier={handleRemoveSupplier}
         />
+
+        {eventData && (
+          <>
+            <Separator className="my-6" />
+            <EventRecommendations event={eventData} />
+          </>
+        )}
       </SheetContent>
     </Sheet>
   );

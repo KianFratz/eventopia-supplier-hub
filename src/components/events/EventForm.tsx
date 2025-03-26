@@ -1,37 +1,57 @@
-
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { Calendar, Clock, MapPin, DollarSign, Users } from 'lucide-react';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { CalendarIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
+import { Calendar } from '@/components/ui/calendar';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 
-const eventFormSchema = z.object({
-  name: z.string().min(3, { message: 'Event name must be at least 3 characters.' }),
-  date: z.string({ required_error: 'Please select a date.' }),
-  time: z.string({ required_error: 'Please enter a time.' }),
-  location: z.string().min(3, { message: 'Location is required.' }),
-  budget: z.string().min(1, { message: 'Budget is required.' }),
-  attendees: z.string().min(1, { message: 'Number of attendees is required.' }),
-  status: z.string(),
+const formSchema = z.object({
+  name: z.string().min(1, { message: 'Event name is required' }),
+  date: z.string().min(1, { message: 'Date is required' }),
+  time: z.string().min(1, { message: 'Time is required' }),
+  location: z.string().min(1, { message: 'Location is required' }),
+  budget: z.string().min(1, { message: 'Budget is required' }),
+  attendees: z.string().min(1, { message: 'Number of attendees is required' }),
+  status: z.string().optional(),
   description: z.string().optional(),
+  type: z.string().optional(),
 });
 
-type EventFormValues = z.infer<typeof eventFormSchema>;
+type FormValues = z.infer<typeof formSchema>;
 
 interface EventFormProps {
-  defaultValues?: Partial<EventFormValues>;
-  onSubmit: (data: EventFormValues) => void;
+  defaultValues?: Partial<FormValues>;
+  onSubmit: (values: FormValues) => void;
   submitLabel?: string;
+  onChange?: (values: FormValues) => void;
 }
 
-export function EventForm({ defaultValues, onSubmit, submitLabel = "Save Event" }: EventFormProps) {
-  const form = useForm<EventFormValues>({
-    resolver: zodResolver(eventFormSchema),
+export function EventForm({ 
+  defaultValues, 
+  onSubmit, 
+  submitLabel = 'Save',
+  onChange
+}: EventFormProps) {
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
       date: '',
@@ -39,162 +59,153 @@ export function EventForm({ defaultValues, onSubmit, submitLabel = "Save Event" 
       location: '',
       budget: '',
       attendees: '',
-      status: 'Planning',
+      status: 'Upcoming',
       description: '',
+      type: 'Corporate',
       ...defaultValues,
     },
   });
 
+  // Watch for form changes to provide recommendations
+  const watchedValues = form.watch();
+  
+  useEffect(() => {
+    if (onChange) {
+      onChange(watchedValues);
+    }
+  }, [watchedValues, onChange]);
+
+  const onFormSubmit = (data: FormValues) => {
+    // Format the data before submitting
+    const formattedData = {
+      ...data,
+      attendees: parseInt(data.attendees, 10),
+      budget: `$${data.budget}`,
+    };
+    onSubmit(formattedData);
+  };
+
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Event Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Annual Conference..." {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+    <form onSubmit={form.handleSubmit(onFormSubmit)} className="space-y-8">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div>
+          <Label htmlFor="name">Event Name</Label>
+          <Input id="name" type="text" placeholder="Event Name" {...form.register('name')} />
+          {form.formState.errors.name && (
+            <p className="text-sm text-destructive mt-1">{form.formState.errors.name.message}</p>
           )}
-        />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="date"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Date</FormLabel>
-                <FormControl>
-                  <div className="flex">
-                    <Calendar className="mr-2 h-4 w-4 opacity-70 self-center" />
-                    <Input type="date" {...field} />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="time"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Time</FormLabel>
-                <FormControl>
-                  <div className="flex">
-                    <Clock className="mr-2 h-4 w-4 opacity-70 self-center" />
-                    <Input placeholder="9:00 AM - 5:00 PM" {...field} />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
         </div>
-
-        <FormField
-          control={form.control}
-          name="location"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Location</FormLabel>
-              <FormControl>
-                <div className="flex">
-                  <MapPin className="mr-2 h-4 w-4 opacity-70 self-center" />
-                  <Input placeholder="Grand Hotel, New York" {...field} />
-                </div>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+        <div>
+          <Label htmlFor="location">Location</Label>
+          <Input id="location" type="text" placeholder="Location" {...form.register('location')} />
+          {form.formState.errors.location && (
+            <p className="text-sm text-destructive mt-1">{form.formState.errors.location.message}</p>
           )}
-        />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="budget"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Budget</FormLabel>
-                <FormControl>
-                  <div className="flex">
-                    <DollarSign className="mr-2 h-4 w-4 opacity-70 self-center" />
-                    <Input placeholder="15000" {...field} />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="attendees"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Attendees</FormLabel>
-                <FormControl>
-                  <div className="flex">
-                    <Users className="mr-2 h-4 w-4 opacity-70 self-center" />
-                    <Input placeholder="200" {...field} />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
         </div>
+      </div>
 
-        <FormField
-          control={form.control}
-          name="status"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Status</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="Planning">Planning</SelectItem>
-                  <SelectItem value="Confirmed">Confirmed</SelectItem>
-                  <SelectItem value="Completed">Completed</SelectItem>
-                  <SelectItem value="Cancelled">Cancelled</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div>
+          <Label htmlFor="date">Date</Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant={'outline'}
+                className={cn(
+                  'w-full justify-start text-left font-normal',
+                  !form.getValues('date') && 'text-muted-foreground'
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {form.getValues('date') ? (
+                  format(new Date(form.getValues('date')), 'MMMM dd, yyyy')
+                ) : (
+                  <span>Pick a date</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="center" side="bottom">
+              <Calendar
+                mode="single"
+                selected={form.getValues('date') ? new Date(form.getValues('date')) : undefined}
+                onSelect={(date) => {
+                  if (date) {
+                    form.setValue('date', format(date, 'yyyy-MM-dd'));
+                  }
+                }}
+                disabled={(date) =>
+                  date < new Date()
+                }
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+          {form.formState.errors.date && (
+            <p className="text-sm text-destructive mt-1">{form.formState.errors.date.message}</p>
           )}
-        />
-
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea 
-                  placeholder="Enter any additional details about the event..." 
-                  className="resize-none h-24"
-                  {...field} 
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+        </div>
+        <div>
+          <Label htmlFor="time">Time</Label>
+          <Input id="time" type="time" placeholder="Time" {...form.register('time')} />
+          {form.formState.errors.time && (
+            <p className="text-sm text-destructive mt-1">{form.formState.errors.time.message}</p>
           )}
-        />
+        </div>
+        <div>
+          <Label htmlFor="attendees">Attendees</Label>
+          <Input id="attendees" type="number" placeholder="Number of Attendees" {...form.register('attendees')} />
+          {form.formState.errors.attendees && (
+            <p className="text-sm text-destructive mt-1">{form.formState.errors.attendees.message}</p>
+          )}
+        </div>
+      </div>
 
-        <Button type="submit" className="w-full">{submitLabel}</Button>
-      </form>
-    </Form>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div>
+          <Label htmlFor="budget">Budget</Label>
+          <Input id="budget" type="number" placeholder="Budget" {...form.register('budget')} />
+          {form.formState.errors.budget && (
+            <p className="text-sm text-destructive mt-1">{form.formState.errors.budget.message}</p>
+          )}
+        </div>
+        <div>
+          <Label htmlFor="status">Status</Label>
+          <Select disabled>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Upcoming">Upcoming</SelectItem>
+              <SelectItem value="In Progress">In Progress</SelectItem>
+              <SelectItem value="Completed">Completed</SelectItem>
+              <SelectItem value="Cancelled">Cancelled</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div>
+        <Label htmlFor="type">Type</Label>
+        <Select {...form.register('type')} >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select a type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Corporate">Corporate</SelectItem>
+            <SelectItem value="Wedding">Wedding</SelectItem>
+            <SelectItem value="Conference">Conference</SelectItem>
+            <SelectItem value="Party">Party</SelectItem>
+            <SelectItem value="Other">Other</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
+        <Label htmlFor="description">Description</Label>
+        <Textarea id="description" placeholder="Event Description" {...form.register('description')} />
+      </div>
+
+      <Button type="submit">{submitLabel}</Button>
+    </form>
   );
 }

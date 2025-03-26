@@ -14,10 +14,31 @@ export const EventRecommendations = ({ event }: EventRecommendationsProps) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Only process if we have enough data
+    if (!event || (!event.name && !event.description && !event.type)) {
+      setRecommendations([]);
+      setIsLoading(false);
+      return;
+    }
+
     // Simulate API call delay
     const timer = setTimeout(() => {
+      // Ensure event has minimal required properties for recommendation engine
+      const eventData = {
+        id: event.id || 'temp-id',
+        name: event.name || '',
+        date: event.date || new Date().toISOString().split('T')[0],
+        time: event.time || '12:00',
+        location: event.location || '',
+        budget: event.budget || '1000',
+        attendees: event.attendees || 50,
+        status: event.status || 'Draft',
+        description: event.description || '',
+        type: event.type || ''
+      };
+      
       // Get recommendations from our engine
-      const results = recommendSuppliers(event, mockSuppliers, 3);
+      const results = recommendSuppliers(eventData, mockSuppliers, 3);
       
       // Format for display
       setRecommendations(
@@ -49,7 +70,7 @@ export const EventRecommendations = ({ event }: EventRecommendationsProps) => {
   if (recommendations.length === 0) {
     return (
       <div className="py-4">
-        <p className="text-muted-foreground">No supplier recommendations available for this event.</p>
+        <p className="text-muted-foreground">Add more event details to see supplier recommendations.</p>
       </div>
     );
   }
