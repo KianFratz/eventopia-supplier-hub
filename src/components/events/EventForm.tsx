@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -79,8 +80,7 @@ export function EventForm({
     // Format the data before submitting
     const formattedData = {
       ...data,
-      attendees: parseInt(data.attendees, 10),
-      budget: `$${data.budget}`,
+      budget: data.budget.startsWith('$') ? data.budget : `$${data.budget}`,
     };
     onSubmit(formattedData);
   };
