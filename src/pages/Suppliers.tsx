@@ -5,13 +5,20 @@ import { SupplierFilter, FilterOptions } from '@/components/suppliers/SupplierFi
 import { Supplier } from '@/types/supplier';
 import { mockSuppliers } from '@/data/mockData';
 import { cn } from '@/lib/utils';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 
 const Suppliers = () => {
   const [loading, setLoading] = useState(true);
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [filteredSuppliers, setFilteredSuppliers] = useState<Supplier[]>([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  // Get search query from URL if it exists
+  const searchQuery = searchParams.get('q') || '';
+  
   const [filters, setFilters] = useState<FilterOptions>({
-    search: '',
+    search: searchQuery,
     category: '',
     priceRange: [0, 1000],
     rating: 0,
@@ -23,16 +30,21 @@ const Suppliers = () => {
   const categories = Array.from(new Set(mockSuppliers.map(s => s.category)));
   const locations = Array.from(new Set(mockSuppliers.map(s => s.location)));
 
-  // Simulate loading
+  // Simulate loading and update search when URL changes
   useEffect(() => {
     const timer = setTimeout(() => {
       setSuppliers(mockSuppliers);
       setFilteredSuppliers(mockSuppliers);
       setLoading(false);
+      
+      // Update filters with search query from URL if it exists
+      if (searchQuery) {
+        setFilters(prev => ({ ...prev, search: searchQuery }));
+      }
     }, 1000);
     
     return () => clearTimeout(timer);
-  }, []);
+  }, [searchQuery]);
 
   // Apply filters when they change
   useEffect(() => {
@@ -84,6 +96,14 @@ const Suppliers = () => {
 
   const handleFilterChange = (newFilters: FilterOptions) => {
     setFilters(newFilters);
+    
+    // Update URL with search query if it exists
+    if (newFilters.search) {
+      setSearchParams({ q: newFilters.search });
+    } else {
+      searchParams.delete('q');
+      setSearchParams(searchParams);
+    }
   };
 
   // Scroll animation on mount
@@ -111,6 +131,7 @@ const Suppliers = () => {
         onFilterChange={handleFilterChange}
         categories={categories}
         locations={locations}
+        initialSearch={searchQuery}
       />
       
       <div>

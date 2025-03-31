@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Filter, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -28,11 +28,12 @@ interface SupplierFilterProps {
   onFilterChange: (filters: FilterOptions) => void;
   categories: string[];
   locations: string[];
+  initialSearch?: string;
 }
 
-export const SupplierFilter = ({ onFilterChange, categories, locations }: SupplierFilterProps) => {
+export const SupplierFilter = ({ onFilterChange, categories, locations, initialSearch = '' }: SupplierFilterProps) => {
   const [filters, setFilters] = useState<FilterOptions>({
-    search: '',
+    search: initialSearch,
     category: '',
     priceRange: [0, 1000],
     rating: 0,
@@ -41,6 +42,23 @@ export const SupplierFilter = ({ onFilterChange, categories, locations }: Suppli
   });
 
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (initialSearch) {
+      setFilters(prev => ({ ...prev, search: initialSearch }));
+      
+      const updatedActiveFilters = [...activeFilters];
+      const filterIndex = updatedActiveFilters.findIndex(filter => filter.startsWith('search:'));
+      
+      if (filterIndex > -1) {
+        updatedActiveFilters[filterIndex] = `search:${initialSearch}`;
+      } else {
+        updatedActiveFilters.push(`search:${initialSearch}`);
+      }
+      
+      setActiveFilters(updatedActiveFilters);
+    }
+  }, [initialSearch]);
 
   const handleFilterChange = (key: keyof FilterOptions, value: any) => {
     const newFilters = { ...filters, [key]: value };

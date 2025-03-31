@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Search, Menu, X, Bell, Calendar, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,8 +9,10 @@ import { useIsMobile } from '@/hooks/use-mobile';
 export const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const isMobile = useIsMobile();
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,6 +36,15 @@ export const Header = () => {
   ];
 
   const closeMobileMenu = () => setMobileMenuOpen(false);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      // Navigate to suppliers page with search query
+      navigate(`/suppliers?q=${encodeURIComponent(searchQuery.trim())}`);
+      closeMobileMenu();
+    }
+  };
 
   return (
     <header 
@@ -63,13 +74,15 @@ export const Header = () => {
 
         {/* Search and Actions */}
         <div className="hidden md:flex items-center space-x-4">
-          <div className="relative">
+          <form onSubmit={handleSearch} className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input 
               placeholder="Search suppliers..." 
               className="pl-9 w-64 bg-secondary/50 border-0 focus-visible:ring-primary" 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
-          </div>
+          </form>
           <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
             <Bell className="h-5 w-5" />
           </Button>
@@ -109,13 +122,15 @@ export const Header = () => {
               </Link>
             ))}
             <div className="pt-4 border-t border-border">
-              <div className="relative mb-4">
+              <form onSubmit={handleSearch} className="relative mb-4">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input 
                   placeholder="Search suppliers..." 
                   className="pl-9 w-full bg-secondary/50 border-0 focus-visible:ring-primary" 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
-              </div>
+              </form>
               <div className="flex space-x-4">
                 <Button variant="outline" size="icon" className="flex-1 justify-start space-x-2">
                   <Bell className="h-5 w-5" />
