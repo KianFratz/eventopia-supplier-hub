@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Search, Menu, X, Bell, Calendar, Settings } from 'lucide-react';
@@ -40,7 +39,6 @@ export const Header = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Navigate to suppliers page with search query
       navigate(`/suppliers?q=${encodeURIComponent(searchQuery.trim())}`);
       closeMobileMenu();
     }
@@ -132,13 +130,21 @@ export const Header = () => {
                 />
               </form>
               <div className="flex space-x-4">
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  className="flex-1 justify-start space-x-2"
+                  onClick={() => {
+                    navigate('/events');
+                    closeMobileMenu();
+                  }}
+                >
+                  <Calendar className="h-5 w-5" />
+                  <span>Calendar</span>
+                </Button>
                 <Button variant="outline" size="icon" className="flex-1 justify-start space-x-2">
                   <Bell className="h-5 w-5" />
                   <span>Notifications</span>
-                </Button>
-                <Button variant="outline" size="icon" className="flex-1 justify-start space-x-2">
-                  <Calendar className="h-5 w-5" />
-                  <span>Calendar</span>
                 </Button>
                 <Button variant="outline" size="icon" className="flex-1 justify-start space-x-2">
                   <Settings className="h-5 w-5" />

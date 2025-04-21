@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Users, Calendar, Star, TrendingUp, DollarSign, Award, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -5,8 +6,10 @@ import { Card } from '@/components/ui/card';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { RecommendationCard } from '@/components/dashboard/RecommendationCard';
 import { mockSuppliers } from '@/data/mockData';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   // Take a few suppliers for recommendations
   const recommendedSuppliers = mockSuppliers
     .filter(s => s.rating >= 4.5)
@@ -103,7 +106,7 @@ const Dashboard = () => {
           <div>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold">Upcoming Events</h2>
-              <Button variant="ghost" size="sm">View Calendar</Button>
+              <Button variant="ghost" size="sm" onClick={() => navigate('/events')}>View Calendar</Button>
             </div>
             <Card className="overflow-hidden">
               <div className="divide-y divide-border">
@@ -180,3 +183,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
