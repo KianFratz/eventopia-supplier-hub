@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Search, Menu, X, Bell, Calendar, Settings } from 'lucide-react';
@@ -84,7 +85,12 @@ export const Header = () => {
           <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
             <Bell className="h-5 w-5" />
           </Button>
-          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="text-muted-foreground hover:text-foreground"
+            onClick={() => navigate('/events')}
+          >
             <Calendar className="h-5 w-5" />
           </Button>
           <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
