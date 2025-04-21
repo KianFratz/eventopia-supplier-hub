@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Users, Calendar, Star, TrendingUp, DollarSign, Award, ArrowRight } from 'lucide-react';
+import { Users, Calendar, Star, DollarSign, Award, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { StatCard } from '@/components/dashboard/StatCard';
@@ -8,19 +7,36 @@ import { RecommendationCard } from '@/components/dashboard/RecommendationCard';
 import { mockSuppliers } from '@/data/mockData';
 import { useNavigate } from 'react-router-dom';
 
+const mockEvents = [
+  { id: 1, name: 'Marketing Launch Party', budget: 5000, used: 4250 },
+  { id: 2, name: 'Quarterly Team Meetup', budget: 2500, used: 1725 },
+  { id: 3, name: 'Client Appreciation Dinner', budget: 3200, used: 2650 },
+  { id: 4, name: 'Annual Conference', budget: 15000, used: 12000 },
+  { id: 5, name: 'VIP Gala', budget: 10000, used: 8600 },
+];
+
 const Dashboard = () => {
   const navigate = useNavigate();
   // Take a few suppliers for recommendations
   const recommendedSuppliers = mockSuppliers
     .filter(s => s.rating >= 4.5)
     .slice(0, 3);
-  
+
   const recommendationReasons = [
     "Perfect match for your upcoming corporate event based on your preferences",
     "Highly rated by event planners with similar taste to yours",
     "Great pricing and availability that matches your upcoming events"
   ];
-  
+
+  // ---- Calculate budget utilization ----
+  // Sum of all budgets
+  const totalBudget = mockEvents.reduce((sum, event) => sum + event.budget, 0);
+  // Sum of all used/spent
+  const totalUsed = mockEvents.reduce((sum, event) => sum + event.used, 0);
+  // Utilization as percentage (rounded)
+  const budgetUtilization =
+    totalBudget > 0 ? Math.round((totalUsed / totalBudget) * 100) : 0;
+
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
@@ -57,10 +73,11 @@ const Dashboard = () => {
         />
         <StatCard 
           title="Budget Utilization" 
-          value="78%" 
+          value={`${budgetUtilization}%`} 
           icon={<DollarSign className="h-5 w-5" />}
-          trend={-3}
-          trendColor="negative"
+          trend={budgetUtilization - 78}
+          trendColor={budgetUtilization >= 78 ? "positive" : "negative"}
+          description={`Used $${totalUsed.toLocaleString()} of $${totalBudget.toLocaleString()}`}
         />
       </div>
       
@@ -183,4 +200,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
