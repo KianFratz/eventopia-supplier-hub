@@ -28,8 +28,10 @@ const verificationFormSchema = z.object({
   contactEmail: z.string().email({ message: "Valid email is required" }),
   contactPhone: z.string().min(10, { message: "Valid phone number is required" }),
   additionalInfo: z.string().optional(),
-  agreeToTerms: z.literal(true, {
-    errorMap: () => ({ message: "You must agree to the terms and conditions" }),
+  agreeToTerms: z.boolean({
+    required_error: "You must agree to the terms and conditions",
+  }).refine(val => val === true, {
+    message: "You must agree to the terms and conditions",
   }),
 });
 
