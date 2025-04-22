@@ -1,11 +1,12 @@
 
 import React from 'react';
-import { Star, MapPin, Clock, DollarSign } from 'lucide-react';
+import { Star, MapPin, Clock, DollarSign, ClipboardCheck, Check } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Supplier } from '@/types/supplier';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
+import { VerificationDialog } from './VerificationDialog';
 
 interface SupplierCardProps {
   supplier: Supplier;
@@ -23,7 +24,8 @@ export const SupplierCard = ({ supplier, featured = false }: SupplierCardProps) 
     location, 
     price, 
     availability,
-    tags
+    tags,
+    verified
   } = supplier;
 
   const handleViewProfile = () => {
@@ -56,6 +58,15 @@ export const SupplierCard = ({ supplier, featured = false }: SupplierCardProps) 
             <span className="text-xs font-medium text-white">{rating.toFixed(1)}</span>
           </div>
         </div>
+        
+        {verified && (
+          <div className="absolute bottom-3 right-3">
+            <Badge variant="outline" className="bg-emerald-500/90 text-white border-emerald-600 flex items-center">
+              <Check className="h-3 w-3 mr-1" />
+              <span className="text-xs">Verified</span>
+            </Badge>
+          </div>
+        )}
       </div>
       
       <div className="p-4 space-y-3">
@@ -95,10 +106,14 @@ export const SupplierCard = ({ supplier, featured = false }: SupplierCardProps) 
           </div>
         </div>
         
-        <div className="pt-1">
+        <div className="pt-1 space-y-2">
           <Button variant="default" size="sm" className="w-full" onClick={handleViewProfile}>
             View Profile
           </Button>
+          
+          {!verified && (
+            <VerificationDialog supplierId={id} supplierName={name} />
+          )}
         </div>
       </div>
     </div>

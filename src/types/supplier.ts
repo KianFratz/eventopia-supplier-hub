@@ -18,6 +18,7 @@ export interface Supplier {
     website?: string;
   };
   services?: string[];
+  verified?: boolean;
 }
 
 export interface Review {
@@ -27,4 +28,22 @@ export interface Review {
   rating: number;
   comment: string;
   date: string;
+}
+
+export interface VerificationRequest {
+  id?: string;
+  supplierId: string;
+  supplierName: string;
+  businessName: string;
+  businessAddress: string;
+  taxId: string;
+  licenseNumber?: string;
+  contactPerson: string;
+  contactEmail: string;
+  contactPhone: string;
+  documents: string[];
+  additionalInfo?: string;
+  status: 'pending' | 'approved' | 'rejected';
+  submittedAt: string;
+  updatedAt?: string;
 }
