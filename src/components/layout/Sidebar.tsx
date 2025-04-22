@@ -12,7 +12,8 @@ import {
   DollarSign, 
   MessageSquare,
   Clock,
-  ChevronRight
+  ChevronRight,
+  Store
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -29,6 +30,7 @@ export const Sidebar = ({ collapsed, setCollapsed }: SidebarProps) => {
   const mainNavItems = [
     { icon: Home, label: 'Dashboard', path: '/' },
     { icon: Users, label: 'Suppliers', path: '/suppliers' },
+    { icon: Store, label: 'Supplier Dashboard', path: '/supplier-dashboard' },
     { icon: Calendar, label: 'Events', path: '/events' },
     { icon: BarChart3, label: 'Analytics', path: '/analytics' },
   ];

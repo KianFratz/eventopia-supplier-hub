@@ -8,6 +8,7 @@ import { Layout } from "@/components/layout/Layout";
 import Dashboard from "@/pages/Index";
 import Suppliers from "@/pages/Suppliers";
 import SupplierDetail from "@/pages/SupplierDetail";
+import SupplierDashboard from "@/pages/SupplierDashboard";
 import Events from "@/pages/Events";
 import Analytics from "@/pages/Analytics";
 import NotFound from "@/pages/NotFound";
@@ -25,6 +26,7 @@ const App = () => (
             <Route path="/" element={<Dashboard />} />
             <Route path="/suppliers" element={<Suppliers />} />
             <Route path="/suppliers/:id" element={<SupplierDetail />} />
+            <Route path="/supplier-dashboard" element={<SupplierDashboard />} />
             <Route path="/events" element={<Events />} />
             <Route path="/analytics" element={<Analytics />} />
           </Route>
