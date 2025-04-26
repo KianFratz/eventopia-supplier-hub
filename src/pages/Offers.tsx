@@ -7,10 +7,11 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Check, CreditCard, XIcon } from "lucide-react";
+import { Check, XIcon } from "lucide-react";
 import { toast } from 'sonner';
+import { Offer, PaymentMethod } from "@/types/offer";
 
-const mockOffers = [
+const mockOffers: Offer[] = [
   {
     id: "1",
     supplierId: "s1",
@@ -35,10 +36,10 @@ const mockOffers = [
     createdAt: "2024-04-24",
     description: "Complete sound system setup with professional DJ services"
   }
-] as const;
+];
 
-const PaymentDialog = ({ offer, onClose }: { offer: typeof mockOffers[0], onClose: () => void }) => {
-  const [paymentMethod, setPaymentMethod] = React.useState<'credit_card' | 'bank_transfer' | 'paypal'>('credit_card');
+const PaymentDialog = ({ offer, onClose }: { offer: Offer, onClose: () => void }) => {
+  const [paymentMethod, setPaymentMethod] = React.useState<PaymentMethod>('credit_card');
 
   const handlePayment = () => {
     toast.success('Payment processed successfully!');
@@ -54,7 +55,7 @@ const PaymentDialog = ({ offer, onClose }: { offer: typeof mockOffers[0], onClos
         </DialogDescription>
       </DialogHeader>
       <div className="space-y-4 py-4">
-        <RadioGroup value={paymentMethod} onValueChange={(value: any) => setPaymentMethod(value)}>
+        <RadioGroup value={paymentMethod} onValueChange={(value: PaymentMethod) => setPaymentMethod(value)}>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="credit_card" id="credit_card" />
             <Label htmlFor="credit_card">Credit Card</Label>
@@ -82,7 +83,7 @@ const PaymentDialog = ({ offer, onClose }: { offer: typeof mockOffers[0], onClos
   );
 };
 
-const OfferCard = ({ offer }: { offer: typeof mockOffers[0] }) => {
+const OfferCard = ({ offer }: { offer: Offer }) => {
   const [showPayment, setShowPayment] = React.useState(false);
 
   const handleApprove = () => {
@@ -103,7 +104,7 @@ const OfferCard = ({ offer }: { offer: typeof mockOffers[0] }) => {
           </div>
           <Badge variant={
             offer.status === 'pending' ? 'secondary' :
-            offer.status === 'approved' ? 'success' :
+            offer.status === 'approved' ? 'default' :
             offer.status === 'paid' ? 'default' : 'destructive'
           }>
             {offer.status}
