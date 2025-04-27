@@ -11,7 +11,7 @@ import { Check, XIcon } from "lucide-react";
 import { toast } from 'sonner';
 import { Offer, PaymentMethod } from "@/types/offer";
 
-const mockOffers: Offer[] = [
+export const mockOffers: Offer[] = [
   {
     id: "1",
     supplierId: "s1",

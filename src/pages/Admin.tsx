@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Users, Calendar, DollarSign, Star } from 'lucide-react';
 import { mockSuppliers } from '@/data/mockData';
-import { mockOffers } from '@/pages/Offers';
+import { mockOffers } from './Offers';  // Use relative import
 import { StatCard } from '@/components/dashboard/StatCard';
 import { Badge } from '@/components/ui/badge';
 
