@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -7,13 +6,14 @@ import {
   Calendar, 
   BarChart3, 
   Settings, 
-  Search, 
+  Search,
   Star, 
   DollarSign, 
   MessageSquare,
   Clock,
   ChevronRight,
-  Store
+  Store,
+  ServerIcon
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -33,6 +33,7 @@ export const Sidebar = ({ collapsed, setCollapsed }: SidebarProps) => {
     { icon: Store, label: 'Supplier Dashboard', path: '/supplier-dashboard' },
     { icon: Calendar, label: 'Events', path: '/events' },
     { icon: BarChart3, label: 'Analytics', path: '/analytics' },
+    { icon: ServerIcon, label: 'Admin', path: '/admin' },
   ];
 
   const bottomNavItems = [
